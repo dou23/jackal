@@ -8,8 +8,12 @@ if ! [[ "$0" =~ scripts/genproto.sh ]]; then
 	exit 255
 fi
 
+# Install protobuf generators
 go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
+
+# Download the stravaganza dependency to vendor directory
+go mod vendor
 
 FILES=(
   "admin/v1/users.proto"
@@ -25,9 +29,13 @@ FILES=(
 
 for file in "${FILES[@]}"; do
   protoc \
-    --proto_path=${GOPATH}/src \
     --proto_path=. \
+    --proto_path=./vendor \
     --go_out=. \
     --go-grpc_out=. \
     proto/"${file}"
 done
+
+echo "Generated protobuf files"
+# Clean up vendor directory if you don't want to keep it
+# rm -rf vendor
