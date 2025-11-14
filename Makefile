@@ -54,3 +54,6 @@ installctl:
 push-dockerimage:
 	@echo "Pushing docker image..."
 	@bash scripts/dockerimage.sh
+
+dev:
+	go run cmd/jackal/main.go --config=./config/example.config.yaml

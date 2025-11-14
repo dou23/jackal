@@ -1,6 +1,8 @@
 module github.com/ortuman/jackal
 
-go 1.20
+go 1.22.0
+
+toolchain go1.23.4
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
@@ -28,10 +30,16 @@ require (
 	github.com/stretchr/testify v1.7.1
 	go.etcd.io/bbolt v1.3.5
 	go.etcd.io/etcd/client/v3 v3.5.1
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
+	golang.org/x/crypto v0.27.0
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba
 	google.golang.org/grpc v1.38.0
 	google.golang.org/protobuf v1.33.0
+)
+
+require (
+	mellium.im/sasl v0.3.2
+	mellium.im/xmlstream v0.15.4
+	mellium.im/xmpp v0.22.0
 )
 
 require (
@@ -63,12 +71,16 @@ require (
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.17.0 // indirect
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
-	golang.org/x/net v0.7.0 // indirect
-	golang.org/x/sys v0.5.0 // indirect
-	golang.org/x/text v0.7.0 // indirect
+	golang.org/x/mod v0.21.0 // indirect
+	golang.org/x/net v0.29.0 // indirect
+	golang.org/x/sync v0.8.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
+	golang.org/x/text v0.18.0 // indirect
+	golang.org/x/tools v0.25.0 // indirect
 	google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	mellium.im/reader v0.1.0 // indirect
 )
 
 replace go.etcd.io/etcd/v3 => github.com/etcd-io/etcd/v3 v3.5.1
