@@ -38,7 +38,6 @@ require (
 
 require (
 	mellium.im/sasl v0.3.2
-	mellium.im/xmlstream v0.15.4
 	mellium.im/xmpp v0.22.0
 )
 
@@ -81,6 +80,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	mellium.im/reader v0.1.0 // indirect
+	mellium.im/xmlstream v0.15.4 // indirect
 )
 
 replace go.etcd.io/etcd/v3 => github.com/etcd-io/etcd/v3 v3.5.1
