@@ -39,7 +39,7 @@ func NewHost(cfg Config) (*Host, error) {
 		hs.RegisterHost(defaultDomain, cer)
 		return hs, nil
 	}
-	cer, err := tlsutil.LoadCertificate(cfg.TLS.PrivateKeyFile, cfg.TLS.CertFile, config.Domain)
+	cer, err := tlsutil.LoadCertificate(cfg.TLS.PrivateKeyFile, cfg.TLS.CertFile, cfg.Domain)
 	if err != nil {
 		return nil, err
 	}
