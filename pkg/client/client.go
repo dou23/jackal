@@ -1,16 +1,23 @@
 package client
 
-import "crypto/tls"
-
 //jackal client
 
 type Client struct {
 	// Fields for client
-	cfg Config
+	Cfg          Config
+	UserAuth     UserAuth
+	ClientSocket *ClientSocket
+}
+
+type UserAuth struct {
+	Username string
+	Password string
 }
 
 func NewClient(cfg Config) *Client {
-	return &Client{
-		cfg: cfg,
+	c := &Client{
+		Cfg: cfg,
 	}
+	c.ClientSocket = NewConn(cfg.ServerCfg.Listener)
+	return c
 }

@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"crypto/tls"
+	"encoding/base64"
 	"net"
 	"strconv"
 	"sync"
@@ -15,7 +16,7 @@ import (
 
 	streamerror "github.com/jackal-xmpp/stravaganza/errors/stream"
 	xmppparser "github.com/jackal-xmpp/stravaganza/parser"
-	"github.com/ortuman/jackal/pkg/component/xep0114"
+	"github.com/ortuman/jackal/pkg/c2s"
 	"github.com/ortuman/jackal/pkg/hook"
 	"github.com/ortuman/jackal/pkg/host"
 	"github.com/ortuman/jackal/pkg/router/stream"
@@ -37,11 +38,12 @@ const (
 )
 
 type ClientSocket struct {
-	id string
+	UserAuth UserAuth
+	id       string
 	// Fields for client
-	conn net.Conn
-	dTLS tls.Dialer
-	cfg  xep0114.ListenerConfig
+	conn       net.Conn
+	dTLSDialer tls.Dialer
+	cfg        c2s.ListenerConfig
 	// secretKey string
 	jid       jid.JID
 	remoteJid jid.JID
@@ -71,7 +73,7 @@ type ClientSocket struct {
 	pendingQueue []stravaganza.Element
 }
 
-func NewConn(cfg xep0114.ListenerConfig) *ClientSocket {
+func NewConn(cfg c2s.ListenerConfig) *ClientSocket {
 	return &ClientSocket{
 		cfg: cfg,
 	}
@@ -91,12 +93,12 @@ func (c *ClientSocket) Start(ctx context.Context) error {
 		Timeout:   c.cfg.ConnectTimeout,
 		KeepAlive: c.cfg.KeepAliveTimeout,
 	}
-	dTLS := tls.Dialer{
+	dTLSDialer := tls.Dialer{
 		NetDialer: &d,
 		Config:    c.tlsCfg,
 	}
-	conn, err := dTLS.DialContext(ctx, "tcp", c.getAddress())
-	c.dTLS = dTLS
+	conn, err := dTLSDialer.DialContext(ctx, "tcp", c.getAddress())
+	c.dTLSDialer = dTLSDialer
 	c.conn = conn
 	c.tr = transport.NewSocketTransport(conn, c.cfg.ConnectTimeout, c.cfg.KeepAliveTimeout)
 	id := nextStreamID()
@@ -208,6 +210,16 @@ func (s *ClientSocket) handleConnected(ctx context.Context, elem stravaganza.Ele
 	if s.flags.isAuthenticated() {
 		return s.finishAuthentication(ctx)
 	}
+	if hasExternalAuthMechanism(elem) {
+		s.setState(ClientAuthenticating)
+		return s.sendElement(ctx, stravaganza.NewBuilder("auth").
+			WithAttribute(stravaganza.Namespace, saslNamespace).
+			WithAttribute("mechanism", "EXTERNAL").
+			WithText(base64.StdEncoding.EncodeToString([]byte(s.jid.String()))).
+			Build(),
+		)
+	}
+
 	// switch s.typ {
 	// case defaultType:
 	// 	switch {

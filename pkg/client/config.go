@@ -9,7 +9,6 @@ import (
 	"github.com/ortuman/jackal/pkg/auth/pepper"
 	"github.com/ortuman/jackal/pkg/c2s"
 	"github.com/ortuman/jackal/pkg/component/xep0114"
-	"github.com/ortuman/jackal/pkg/host"
 	"github.com/ortuman/jackal/pkg/module/offline"
 	"github.com/ortuman/jackal/pkg/module/xep0092"
 	"github.com/ortuman/jackal/pkg/module/xep0198"
@@ -73,7 +72,7 @@ type Config struct {
 
 	Peppers pepper.Config  `fig:"peppers"`
 	Storage storage.Config `fig:"storage"`
-	Hosts   host.Config    `fig:"host"`
+	// Hosts   host.Config    `fig:"host"`
 
 	ServerCfg  ServiceConfig    `fig:"service"`
 	Components ComponentsConfig `fig:"components"`
