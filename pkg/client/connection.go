@@ -10,6 +10,7 @@ import (
 	"sync/atomic"
 
 	kitlog "github.com/go-kit/log"
+	"github.com/go-kit/log/level"
 	"github.com/jackal-xmpp/runqueue/v2"
 	"github.com/jackal-xmpp/stravaganza"
 	"github.com/jackal-xmpp/stravaganza/jid"
@@ -87,7 +88,7 @@ func (c *ClientSocket) HandleCoon(conn net.Conn) {
 
 }
 
-func (c *ClientSocket) Start(ctx context.Context) error {
+func (c *ClientSocket) dial(ctx context.Context) error {
 	// Start
 	d := net.Dialer{
 		Timeout:   c.cfg.ConnectTimeout,
@@ -114,6 +115,27 @@ func (c *ClientSocket) Start(ctx context.Context) error {
 		c.logger,
 	)
 	return err
+}
+
+func (c *ClientSocket) start() error {
+	c.restartSession()
+
+	ctx, cancel := c.requestContext()
+	_ = c.session.OpenStream(ctx)
+
+	level.Info(c.logger).Log("msg", "registered c2S out stream")
+	// post registered S2S event
+	err := c.runHook(ctx, hook.C2SStreamConnected, &hook.C2SStreamInfo{
+		ID: c.ID(),
+	})
+	cancel()
+
+	if err != nil {
+		return err
+	}
+
+	c.readLoop()
+	return nil
 }
 
 func (c *ClientSocket) setState(state ClientState) {
